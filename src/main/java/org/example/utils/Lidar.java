@@ -24,11 +24,15 @@ public class Lidar {
 
     private final Queue<Entity> entities = new ArrayDeque<>();
 
+    private LidarMode currentMode;
+
+    private boolean modeChangeState = false;
 
     private final Player player;
 
     public Lidar(Player player){
         this.player = player;
+        currentMode = LidarMode.WALL;
     }
 
     public void wallShot(){
@@ -44,6 +48,29 @@ public class Lidar {
         }
     }
 
+    public LidarMode getCurrentMode(){
+        return currentMode;
+    }
+
+    public String getLidarModeString(){
+        return currentMode.toString();
+    }
+
+    public void setModeChangeState(boolean modeChangeState){
+        this.modeChangeState = modeChangeState;
+    }
+
+    public boolean isModeChangeState() {
+        return modeChangeState;
+    }
+
+    public void switchModeRight(){
+        currentMode = LidarMode.getModeById(currentMode.getId()+1);
+    }
+
+    public void switchModeLeft(){
+        currentMode = LidarMode.getModeById(currentMode.getId()-1);
+    }
 
     private Pos rayCast(Pos pos,Vec direction){
         direction = direction.normalize().mul(STEP);
@@ -68,7 +95,6 @@ public class Lidar {
                         Pos collisionPos = rayCast(playerPos,direction.add(dx));
                         if (collisionPos != null){
                             createDot(collisionPos);
-                            player.sendMessage(collisionPos.toString());
                         }
                     },
                 delay,

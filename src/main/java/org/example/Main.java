@@ -11,16 +11,16 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
+import org.example.components.LidarComponent;
 import org.example.components.ObjRenderer;
 import org.example.utils.Lidar;
 import org.example.utils.Obj;
 
 public class Main {
 
-    private static Lidar lidar;
-
     static void main() {
         MinecraftServer server = MinecraftServer.init();
+        MinecraftServer.getConnectionManager().setPlayerProvider(CustomPlayer::new);
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         InstanceContainer container = instanceManager.createInstanceContainer();
@@ -37,11 +37,14 @@ public class Main {
         eventHandler.addListener(PlayerSpawnEvent.class, event ->{
             final Player player = event.getPlayer();
             player.setGameMode(GameMode.CREATIVE);
-            lidar = new Lidar(player);
+            player.getInventory().addItemStack(ToolsAssets.lidarTool);
         });
 
         ObjRenderer listener = new ObjRenderer(container);
         listener.turnOn();
+
+        LidarComponent lidarComponent = new LidarComponent();
+        lidarComponent.turnOn();
 
         eventHandler.addListener(PlayerSwapItemEvent.class, event ->{
             final Player player = event.getPlayer();
@@ -51,12 +54,6 @@ public class Main {
             obj.spawn(listener,instance,pos);
             player.sendMessage("Event");
         });
-
-        eventHandler.addListener(PlayerChatEvent.class, event ->{
-            listener.turnOff();
-            lidar.wallShot();
-        });
-
 
         container.setChunkSupplier(LightingChunk::new);
 
