@@ -54,14 +54,15 @@ public class Lidar {
        int radius = 10;
        int precision = 12;
        double pi = Math.PI;
-       for (int r = 0; r < radius; r++){
+       singleShot(new Vec(0),TaskSchedule.nextTick());
+       for (int r = 1; r < radius; r++){
            for (int i = 0; i < 2* precision; i++) {
                Vec offsetX = basis.getRight().mul(Math.cos(i * pi / precision)).mul(r*SPREAD_FACTOR);
                Vec offsetY = basis.getUp().mul(Math.sin(i * pi / precision)).mul(r*SPREAD_FACTOR);
                Vec offset = offsetX.add(offsetY);
                singleShot(offset, TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
-               iter++;
            }
+           iter++;
        }
     }
 

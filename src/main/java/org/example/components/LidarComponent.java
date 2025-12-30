@@ -1,21 +1,29 @@
 package org.example.components;
 
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.player.PlayerChangeHeldSlotEvent;
-import net.minestom.server.event.player.PlayerStartSneakingEvent;
-import net.minestom.server.event.player.PlayerStopSneakingEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.event.player.*;
 import org.example.CustomPlayer;
-import org.example.ToolsAssets;
+import org.example.ToolAssets;
 import org.example.utils.Lidar;
 
 public class LidarComponent extends AbstractComponent {
 
     public LidarComponent(){
+
+        eventHandler.addListener(PlayerUseItemOnBlockEvent.class, event ->{
+            if (isOn){
+                final Player player = event.getPlayer();
+                if (event.getItemStack().equals(ToolAssets.lidarTool)){
+                    CustomPlayer customPlayer = (CustomPlayer) player;
+                    customPlayer.getLidar().shot();
+                }
+            }
+        });
+
         eventHandler.addListener(PlayerUseItemEvent.class, event ->{
             if (isOn) {
                 final Player player = event.getPlayer();
-                if (event.getItemStack().equals(ToolsAssets.lidarTool)){
+                if (event.getItemStack().equals(ToolAssets.lidarTool)){
                     CustomPlayer customPlayer = (CustomPlayer) player;
                     customPlayer.getLidar().shot();
                 }
@@ -25,7 +33,7 @@ public class LidarComponent extends AbstractComponent {
         eventHandler.addListener(PlayerStartSneakingEvent.class, event ->{
             if (isOn){
                 final Player player = event.getPlayer();
-                if (player.getItemInMainHand().equals(ToolsAssets.lidarTool)){
+                if (player.getItemInMainHand().equals(ToolAssets.lidarTool)){
                     CustomPlayer customPlayer = (CustomPlayer) player;
                     customPlayer.getLidar().setModeChangeState(true);
                 }
@@ -46,11 +54,11 @@ public class LidarComponent extends AbstractComponent {
             if (isOn){
                 CustomPlayer player = (CustomPlayer) event.getPlayer();
                 Lidar lidar = player.getLidar();
-                if (event.getItemInNewSlot().equals(ToolsAssets.lidarTool)){
+                if (event.getItemInNewSlot().equals(ToolAssets.lidarTool)){
                     player.sendMessage(lidar.getLidarModeString());
                 }
 
-                if (!event.getItemInOldSlot().equals(ToolsAssets.lidarTool)){
+                if (!event.getItemInOldSlot().equals(ToolAssets.lidarTool)){
                     return;
                 }
 

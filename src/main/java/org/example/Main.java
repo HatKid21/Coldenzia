@@ -43,7 +43,7 @@ public class Main {
         eventHandler.addListener(PlayerSpawnEvent.class, event ->{
             final Player player = event.getPlayer();
             player.setGameMode(GameMode.CREATIVE);
-            player.getInventory().addItemStack(ToolsAssets.lidarTool);
+                player.getInventory().addItemStack(ToolAssets.lidarTool);
         });
 
         ObjRenderer listener = new ObjRenderer(container);
