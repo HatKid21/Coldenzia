@@ -8,10 +8,8 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.*;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.anvil.AnvilLoader;
-import net.minestom.server.instance.block.Block;
 import org.example.components.LidarComponent;
 import org.example.components.ObjRenderer;
-import org.example.utils.Lidar;
 import org.example.utils.Obj;
 
 import java.nio.file.Path;
