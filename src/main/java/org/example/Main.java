@@ -6,18 +6,21 @@ import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.*;
-import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.InstanceContainer;
-import net.minestom.server.instance.InstanceManager;
-import net.minestom.server.instance.LightingChunk;
+import net.minestom.server.instance.*;
+import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
 import org.example.components.LidarComponent;
 import org.example.components.ObjRenderer;
 import org.example.utils.Lidar;
 import org.example.utils.Obj;
 
+import java.nio.file.Path;
+
 public class Main {
 
+    private static final Path WORLD_PATH = Path.of("data/worlds/Training_Ground");
+    private static final Pos SPAWN_POS = new Pos(8.5,-60,8.5);
+    
     static void main() {
         MinecraftServer server = MinecraftServer.init();
         MinecraftServer.getConnectionManager().setPlayerProvider(CustomPlayer::new);
@@ -25,13 +28,16 @@ public class Main {
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         InstanceContainer container = instanceManager.createInstanceContainer();
 
-        container.setGenerator(unit -> unit.modifier().fillHeight(0,40, Block.GRASS_BLOCK));
+        
+        ChunkLoader loader = new AnvilLoader(WORLD_PATH);
+
+        container.setChunkLoader(loader);
 
         GlobalEventHandler eventHandler = MinecraftServer.getGlobalEventHandler();
         eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event ->{
             final Player player = event.getPlayer();
             event.setSpawningInstance(container);
-            player.setRespawnPoint(new Pos(8,-60,8));
+            player.setRespawnPoint(SPAWN_POS);
         });
 
         eventHandler.addListener(PlayerSpawnEvent.class, event ->{
