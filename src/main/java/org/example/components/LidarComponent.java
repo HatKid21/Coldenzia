@@ -17,7 +17,7 @@ public class LidarComponent extends AbstractComponent {
                 final Player player = event.getPlayer();
                 if (event.getItemStack().equals(ToolsAssets.lidarTool)){
                     CustomPlayer customPlayer = (CustomPlayer) player;
-                    customPlayer.getLidar().wallShot();
+                    customPlayer.getLidar().shot();
                 }
             }
         });

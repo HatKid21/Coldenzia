@@ -31,7 +31,7 @@ public class Main {
         eventHandler.addListener(AsyncPlayerConfigurationEvent.class, event ->{
             final Player player = event.getPlayer();
             event.setSpawningInstance(container);
-            player.setRespawnPoint(new Pos(0,42,0));
+            player.setRespawnPoint(new Pos(8,-60,8));
         });
 
         eventHandler.addListener(PlayerSpawnEvent.class, event ->{

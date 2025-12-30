@@ -17,7 +17,7 @@ import java.util.Queue;
 public class Lidar {
 
     private static final long DOT_SPAWN_DELAY = 100;
-    private static final double SPREAD_FACTOR = 0.08;
+    private static final double SPREAD_FACTOR = 0.03;
     private static final Vec DOT_SCALE = new Vec(0.05);
     private static final double STEP = 0.1;
     private static final int AMOUNT_OF_DOTS = 500;
@@ -35,7 +35,37 @@ public class Lidar {
         currentMode = LidarMode.WALL;
     }
 
-    public void wallShot(){
+    public void shot(){
+        switch (currentMode){
+            case LidarMode.WALL -> wallShot();
+            case LidarMode.CIRCLE -> circleShot();
+            case LidarMode.RANDOM -> randomShot();
+            default -> wallShot();
+        }
+    }
+
+    private void randomShot(){
+        player.sendMessage("In progress!");
+    }
+
+    private void circleShot(){
+       Basis basis = new Basis(player.getPosition().direction());
+       long iter = 0;
+       int radius = 10;
+       int precision = 12;
+       double pi = Math.PI;
+       for (int r = 0; r < radius; r++){
+           for (int i = 0; i < 2* precision; i++) {
+               Vec offsetX = basis.getRight().mul(Math.cos(i * pi / precision)).mul(r*SPREAD_FACTOR);
+               Vec offsetY = basis.getUp().mul(Math.sin(i * pi / precision)).mul(r*SPREAD_FACTOR);
+               Vec offset = offsetX.add(offsetY);
+               singleShot(offset, TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
+               iter++;
+           }
+       }
+    }
+
+    private void wallShot(){
         Basis basis = new Basis(player.getPosition().direction());
         long iter = 0;
         for (int y = 5; y > -5; y--){

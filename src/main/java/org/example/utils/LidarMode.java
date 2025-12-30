@@ -3,7 +3,7 @@ package org.example.utils;
 public enum LidarMode {
 
     WALL("Wall",1),
-    SPHERE("Sphere",2),
+    CIRCLE("Circle",2),
     RANDOM("Random",3);
 
     private final int id;
