@@ -1,5 +1,6 @@
 package org.example.components;
 
+import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.*;
 import org.example.CustomPlayer;
@@ -55,7 +56,8 @@ public class LidarComponent extends AbstractComponent {
                 CustomPlayer player = (CustomPlayer) event.getPlayer();
                 Lidar lidar = player.getLidar();
                 if (event.getItemInNewSlot().equals(ToolAssets.lidarTool)){
-                    player.sendMessage(lidar.getLidarModeString());
+                    Component text = Component.text("Mode: " + lidar.getLidarModeString());
+                    player.sendActionBar(text);
                 }
 
                 if (!event.getItemInOldSlot().equals(ToolAssets.lidarTool)){

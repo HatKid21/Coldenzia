@@ -57,41 +57,36 @@ public class Lidar {
     }
 
     private void randomShot(){
-        Basis basis = new Basis(player.getPosition().direction());
         int numberOfDots = 150;
         int iter = 0;
         for (int i = 0; i < numberOfDots;i++){
-            Vec dx = basis.getRight().mul(random.nextInt(-HALF_WIDTH,HALF_WIDTH)).mul(SPREAD_FACTOR);
-            Vec dy = basis.getUp().mul(random.nextInt(-HALF_HEIGHT,HALF_HEIGHT)).mul(SPREAD_FACTOR);
-            Vec d = dx.add(dy);
-            singleShot(d,TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
+            double dxFactor = random.nextInt(-HALF_WIDTH,HALF_WIDTH) * SPREAD_FACTOR;
+            double dyFactor = random.nextInt(-HALF_HEIGHT,HALF_HEIGHT)*SPREAD_FACTOR;
+            singleShot(dxFactor,dyFactor,TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
             iter++;
         }
     }
 
     private void circleShot(){
-       Basis basis = new Basis(player.getPosition().direction());
        long iter = 0;
-       singleShot(new Vec(0),TaskSchedule.nextTick());
+       singleShot(0,0,TaskSchedule.nextTick());
        for (int r = 1; r < RADIUS; r++){
            for (int i = 0; i < 2* ROTATION_PRECISION; i++) {
-               Vec offsetX = basis.getRight().mul(Math.cos(i * PI / ROTATION_PRECISION)).mul(r*SPREAD_FACTOR);
-               Vec offsetY = basis.getUp().mul(Math.sin(i * PI / ROTATION_PRECISION)).mul(r*SPREAD_FACTOR);
-               Vec offset = offsetX.add(offsetY);
-               singleShot(offset, TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
+               double dxFactor = Math.cos(i * PI / ROTATION_PRECISION)*r*SPREAD_FACTOR;
+               double dyFactor = Math.sin(i*PI / ROTATION_PRECISION)*r*SPREAD_FACTOR;
+               singleShot(dxFactor,dyFactor, TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
            }
            iter++;
        }
     }
 
     private void wallShot(){
-        Basis basis = new Basis(player.getPosition().direction());
         long iter = 0;
         for (int y = HALF_HEIGHT; y > -HALF_HEIGHT; y--){
             for (int x = -HALF_WIDTH; x < HALF_WIDTH; x++){
-                Vec offset = basis.getRight().mul(x*SPREAD_FACTOR);
-                offset = offset.add(basis.getUp().mul(y*SPREAD_FACTOR));
-                singleShot(offset,TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
+                double dxFactor = x*SPREAD_FACTOR;
+                double dyFactor = y*SPREAD_FACTOR;
+                singleShot(dxFactor,dyFactor,TaskSchedule.millis(DOT_SPAWN_DELAY*iter));
             }
             iter++;
         }
@@ -135,13 +130,16 @@ public class Lidar {
         return null;
     }
 
-    private void singleShot(Vec d,TaskSchedule delay){
+    private void singleShot(double dxFactor,double dyFactor,TaskSchedule delay){
         MinecraftServer.getSchedulerManager().scheduleTask(
                 () ->{
                         Pos playerPos = player.getPosition().withPitch(0).withYaw(0);
                         playerPos = playerPos.add(new Pos(0,player.getEyeHeight(),0));
-                        Vec direction = player.getPosition().direction();
-                        Pos collisionPos = rayCast(playerPos,direction.add(d));
+                        Basis basis = new Basis(player.getPosition().direction());
+                        Vec offsetX = basis.getRight().mul(dxFactor);
+                        Vec offsetY = basis.getUp().mul(dyFactor);
+                        Vec offset = offsetX.add(offsetY);
+                        Pos collisionPos = rayCast(playerPos,basis.getDirection().add(offset));
                         if (collisionPos != null){
                             createDot(collisionPos);
                         }
